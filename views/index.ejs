@@ -1,45 +1,36 @@
 <%- include('partials/header.ejs'); -%>
 
-  <div class="box" id="heading">
-    <h1>
-      <%= listTitle %>
-    </h1>
-  </div>
-  <div class="box">
-    <% for(let item of listItems){%>
-      <div class="item">
-        <form action="/delete" method="post">
-          <input type="checkbox" onchange="this.form.submit()" name="deleteItemId" value="<%= item.id %>">
-        </form>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">✓</span><span>Taskflow</span></div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode"><span>☼</span><span id="themeLabel">Dark mode</span></button>
+  </header>
 
-        <p id="title<%=item.id%>">
-          <%= item.title %>
-        </p>
+  <section class="welcome-row">
+    <div><p class="eyebrow">YOUR PERSONAL WORKSPACE</p><h1>Good morning, let’s get things done.</h1><p class="subtle">A clear mind starts with a clear list.</p></div>
+    <div class="date-chip"><strong><%= new Date().toLocaleDateString('en-US', { weekday: 'long' }) %></strong><span><%= new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></span></div>
+  </section>
 
-        <form class="edit" action="/edit" method="post">
-          <input type="hidden" name="updatedItemId" value="<%= item.id %>">
-          <input id="input<%=item.id%>" type="text" name="updatedItemTitle" value="<%= item.title %>" autocomplete="off"
-            autofocus="true" hidden="true" />
-          <button id="done<%=item.id%>" class="edit" type="submit" hidden><img class="icon"
-              src="/assets/icons/check-solid.svg" alt="tick image"></button>
-        </form>
-        <button id="edit<%=item.id%>" class="edit" onclick="handler('<%=item.id%>')"><img class="icon"
-            src="/assets/icons/pencil-solid.svg" alt="pencil image"></button>
+  <section class="stats-grid" aria-label="Task statistics">
+    <div class="stat-card accent-blue"><span class="stat-icon">◉</span><span>Total tasks</span><strong><%= stats.total %></strong><small>Everything on your list</small></div>
+    <div class="stat-card accent-green"><span class="stat-icon">✓</span><span>Completed</span><strong><%= stats.completed %></strong><small>Nice work, keep going</small></div>
+    <div class="stat-card accent-orange"><span class="stat-icon">◷</span><span>Pending</span><strong><%= stats.pending %></strong><small>Tasks still in progress</small></div>
+    <div class="stat-card accent-purple"><span class="stat-icon">↗</span><span>Completion rate</span><strong><%= stats.percentage %>%</strong><small>Of all your tasks</small></div>
+  </section>
+
+  <section class="progress-panel"><div class="progress-heading"><div><span class="eyebrow">YOUR PROGRESS</span><h2>Keep the momentum going</h2></div><strong><%= stats.completed %> / <%= stats.total %> <span>tasks completed</span></strong></div><div class="progress-track"><div class="progress-fill" data-progress="<%= stats.percentage %>"></div></div></section>
+
+  <section class="workspace-grid">
+    <div class="tasks-column">
+      <div class="toolbar"><div class="search-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="Search your tasks..." aria-label="Search tasks"></div><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-btn active" data-filter="all">All <span><%= stats.total %></span></button><button class="filter-btn" data-filter="pending">Pending</button><button class="filter-btn" data-filter="completed">Completed</button><button class="filter-btn" data-filter="high">High</button><button class="filter-btn" data-filter="medium">Medium</button><button class="filter-btn" data-filter="low">Low</button></div></div>
+      <div class="section-heading"><h2>My tasks</h2><span id="visibleCount"><%= stats.total %> tasks</span></div>
+      <div id="taskList" class="task-list">
+        <section class="task-group" data-group="pending"><div class="task-group-heading"><h3>Pending</h3><span><%= stats.pending %></span></div><div class="task-group-list"><% listItems.filter(item => item.status !== 'completed').forEach(item => { %><%- include('partials/task.ejs', { item }) %><% }) %></div></section>
+        <section class="task-group" data-group="completed"><div class="task-group-heading"><h3>Completed</h3><span><%= stats.completed %></span></div><div class="task-group-list"><% listItems.filter(item => item.status === 'completed').forEach(item => { %><%- include('partials/task.ejs', { item }) %><% }) %></div></section>
+        <div class="empty-state" id="emptyState" hidden><div class="empty-illustration">✓</div><h3>No tasks found</h3><p>Try another search or add a new task to get started.</p></div>
       </div>
-      <% } %>
+    </div>
+    <aside class="add-panel"><span class="eyebrow">NEW TASK</span><h2>Add something to your list</h2><form action="/add" method="post" class="add-form"><label for="newItem">What needs to be done?</label><input id="newItem" name="newItem" type="text" placeholder="e.g. Prepare presentation" required autocomplete="off"><div class="form-row"><label>Priority<select name="priority"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select></label><label>Due date<input name="dueDate" type="date"></label></div><label>Category<select name="category"><option>Personal</option><option>Work</option><option>Study</option><option>Shopping</option></select></label><button class="primary-btn" type="submit"><span>＋</span> Add task</button></form></aside>
+  </section>
 
-        <form class="item" action="/add" method="post">
-          <input type="text" name="newItem" placeholder="New Item" autocomplete="off" autofocus="true" />
-          <button class="add" type="submit" name="list" value=<%=listTitle %> >+</button>
-        </form>
-  </div>
-
-  <script>
-    function handler(id) {
-      document.getElementById("title" + id).setAttribute("hidden", true)
-      document.getElementById("edit" + id).setAttribute("hidden", true)
-      document.getElementById("done" + id).removeAttribute("hidden")
-      document.getElementById("input" + id).removeAttribute("hidden")
-    }
-  </script>
+  <script src="/scripts/app.js"></script>
   <%- include('partials/footer.ejs'); -%>
