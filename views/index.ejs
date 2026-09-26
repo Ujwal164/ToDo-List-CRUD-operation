@@ -1,36 +1,345 @@
 <%- include('partials/header.ejs'); -%>
 
+  <!-- Top Navigation Bar -->
   <header class="topbar">
-    <div class="brand"><span class="brand-mark">✓</span><span>Taskflow</span></div>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode"><span>☼</span><span id="themeLabel">Dark mode</span></button>
-  </header>
-
-  <section class="welcome-row">
-    <div><p class="eyebrow">YOUR PERSONAL WORKSPACE</p><h1>Good morning, let’s get things done.</h1><p class="subtle">A clear mind starts with a clear list.</p></div>
-    <div class="date-chip"><strong><%= new Date().toLocaleDateString('en-US', { weekday: 'long' }) %></strong><span><%= new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></span></div>
-  </section>
-
-  <section class="stats-grid" aria-label="Task statistics">
-    <div class="stat-card accent-blue"><span class="stat-icon">◉</span><span>Total tasks</span><strong><%= stats.total %></strong><small>Everything on your list</small></div>
-    <div class="stat-card accent-green"><span class="stat-icon">✓</span><span>Completed</span><strong><%= stats.completed %></strong><small>Nice work, keep going</small></div>
-    <div class="stat-card accent-orange"><span class="stat-icon">◷</span><span>Pending</span><strong><%= stats.pending %></strong><small>Tasks still in progress</small></div>
-    <div class="stat-card accent-purple"><span class="stat-icon">↗</span><span>Completion rate</span><strong><%= stats.percentage %>%</strong><small>Of all your tasks</small></div>
-  </section>
-
-  <section class="progress-panel"><div class="progress-heading"><div><span class="eyebrow">YOUR PROGRESS</span><h2>Keep the momentum going</h2></div><strong><%= stats.completed %> / <%= stats.total %> <span>tasks completed</span></strong></div><div class="progress-track"><div class="progress-fill" data-progress="<%= stats.percentage %>"></div></div></section>
-
-  <section class="workspace-grid">
-    <div class="tasks-column">
-      <div class="toolbar"><div class="search-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="Search your tasks..." aria-label="Search tasks"></div><div class="filter-row" role="group" aria-label="Filter tasks"><button class="filter-btn active" data-filter="all">All <span><%= stats.total %></span></button><button class="filter-btn" data-filter="pending">Pending</button><button class="filter-btn" data-filter="completed">Completed</button><button class="filter-btn" data-filter="high">High</button><button class="filter-btn" data-filter="medium">Medium</button><button class="filter-btn" data-filter="low">Low</button></div></div>
-      <div class="section-heading"><h2>My tasks</h2><span id="visibleCount"><%= stats.total %> tasks</span></div>
-      <div id="taskList" class="task-list">
-        <section class="task-group" data-group="pending"><div class="task-group-heading"><h3>Pending</h3><span><%= stats.pending %></span></div><div class="task-group-list"><% listItems.filter(item => item.status !== 'completed').forEach(item => { %><%- include('partials/task.ejs', { item }) %><% }) %></div></section>
-        <section class="task-group" data-group="completed"><div class="task-group-heading"><h3>Completed</h3><span><%= stats.completed %></span></div><div class="task-group-list"><% listItems.filter(item => item.status === 'completed').forEach(item => { %><%- include('partials/task.ejs', { item }) %><% }) %></div></section>
-        <div class="empty-state" id="emptyState" hidden><div class="empty-illustration">✓</div><h3>No tasks found</h3><p>Try another search or add a new task to get started.</p></div>
+    <div class="brand">
+      <div class="brand-icon-wrapper">
+        <svg class="brand-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-title">Taskflow</span>
+        <span class="brand-tag">Workspace</span>
       </div>
     </div>
-    <aside class="add-panel"><span class="eyebrow">NEW TASK</span><h2>Add something to your list</h2><form action="/add" method="post" class="add-form"><label for="newItem">What needs to be done?</label><input id="newItem" name="newItem" type="text" placeholder="e.g. Prepare presentation" required autocomplete="off"><div class="form-row"><label>Priority<select name="priority"><option value="medium">Medium</option><option value="high">High</option><option value="low">Low</option></select></label><label>Due date<input name="dueDate" type="date"></label></div><label>Category<select name="category"><option>Personal</option><option>Work</option><option>Study</option><option>Shopping</option></select></label><button class="primary-btn" type="submit"><span>＋</span> Add task</button></form></aside>
+
+    <div class="topbar-actions">
+      <div class="live-sync-indicator" title="Connected to Neon Database">
+        <span class="sync-dot"></span>
+        <span class="sync-text">Live Sync</span>
+      </div>
+
+      <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">
+        <div class="theme-icon-container">
+          <!-- Sun Icon for Dark Mode toggle -->
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <!-- Moon Icon for Light Mode toggle -->
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </div>
+        <span id="themeLabel">Dark mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Welcome / Greeting Banner -->
+  <section class="welcome-banner">
+    <div class="welcome-content">
+      <div class="greeting-badge">
+        <span class="greeting-icon" id="greetingIcon">☀️</span>
+        <span class="eyebrow" id="eyebrowText">YOUR DAILY DASHBOARD</span>
+      </div>
+      <h1 class="welcome-heading" id="welcomeGreeting">Good day, let’s get things done.</h1>
+      <p class="welcome-subtext" id="welcomeSubtext">
+        <% if (stats.pending === 0 && stats.total > 0) { %>
+          ✨ All tasks are completed! Enjoy your day.
+        <% } else if (stats.total === 0) { %>
+          Your workspace is clear. Add a task to get started!
+        <% } else { %>
+          You have <strong id="heroPendingCount"><%= stats.pending %></strong> task<%= stats.pending === 1 ? '' : 's' %> pending. Stay focused and keep momentum.
+        <% } %>
+      </p>
+    </div>
+    <div class="date-badge">
+      <div class="date-badge-inner">
+        <span class="weekday"><%= new Date().toLocaleDateString('en-US', { weekday: 'long' }) %></span>
+        <span class="full-date"><%= new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+      </div>
+    </div>
   </section>
+
+  <!-- Interactive Statistics Hub -->
+  <section class="stats-grid" aria-label="Task statistics">
+    <div class="stat-card stat-total" data-quick-filter="all" title="Click to view all tasks">
+      <div class="stat-card-top">
+        <span class="stat-card-label">Total Tasks</span>
+        <div class="stat-card-icon-wrap icon-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+        </div>
+      </div>
+      <strong class="stat-value" id="statTotal"><%= stats.total %></strong>
+      <div class="stat-card-footer">
+        <span class="stat-subtext">All items in workspace</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-completed" data-quick-filter="completed" title="Click to view completed tasks">
+      <div class="stat-card-top">
+        <span class="stat-card-label">Completed</span>
+        <div class="stat-card-icon-wrap icon-emerald">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+      <strong class="stat-value" id="statCompleted"><%= stats.completed %></strong>
+      <div class="stat-card-footer">
+        <span class="stat-subtext">Completed goals</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-pending" data-quick-filter="pending" title="Click to view pending tasks">
+      <div class="stat-card-top">
+        <span class="stat-card-label">Pending</span>
+        <div class="stat-card-icon-wrap icon-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+      </div>
+      <strong class="stat-value" id="statPending"><%= stats.pending %></strong>
+      <div class="stat-card-footer">
+        <span class="stat-subtext">Still to finish</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-rate" title="Completion percentage">
+      <div class="stat-card-top">
+        <span class="stat-card-label">Completion Rate</span>
+        <div class="stat-card-icon-wrap icon-purple">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </div>
+      </div>
+      <strong class="stat-value" id="statPercentage"><%= stats.percentage %>%</strong>
+      <div class="stat-card-footer">
+        <span class="stat-subtext" id="statRateLabel">Overall efficiency</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Progress Bar Section -->
+  <section class="progress-card">
+    <div class="progress-card-header">
+      <div class="progress-info">
+        <span class="progress-eyebrow">OVERALL PROGRESS</span>
+        <h2 class="progress-title">Keep your momentum flowing</h2>
+      </div>
+      <div class="progress-status-badge">
+        <span class="progress-count-text" id="progressFraction"><strong><%= stats.completed %></strong> / <%= stats.total %> completed</span>
+        <span class="progress-pill-percentage" id="progressPercentagePill"><%= stats.percentage %>%</span>
+      </div>
+    </div>
+    <div class="progress-track-wrapper">
+      <div class="progress-track-bar">
+        <div class="progress-track-fill" id="progressBarFill" data-progress="<%= stats.percentage %>" style="width: <%= stats.percentage %>%;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Workspace Grid -->
+  <section class="workspace-grid">
+    <!-- Tasks Column -->
+    <div class="tasks-column">
+      <!-- Search & Filters Toolbar -->
+      <div class="toolbar-card">
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="searchInput" type="search" placeholder="Search tasks by title, category, priority..." aria-label="Search tasks" autocomplete="off">
+          <button id="clearSearchBtn" class="clear-search-btn" type="button" aria-label="Clear search" hidden>✕</button>
+        </div>
+
+        <div class="filter-controls-row">
+          <div class="status-filter-group" role="group" aria-label="Filter tasks by status">
+            <button class="filter-chip active" data-filter="all">All <span class="chip-count" id="filterCountAll"><%= stats.total %></span></button>
+            <button class="filter-chip" data-filter="pending">Pending <span class="chip-count" id="filterCountPending"><%= stats.pending %></span></button>
+            <button class="filter-chip" data-filter="completed">Completed <span class="chip-count" id="filterCountCompleted"><%= stats.completed %></span></button>
+          </div>
+
+          <div class="secondary-filters-wrap">
+            <!-- Category Filter Dropdown -->
+            <div class="custom-select-wrap">
+              <select id="categoryFilter" aria-label="Filter by category" class="toolbar-select">
+                <option value="all">All Categories</option>
+                <option value="Personal">👤 Personal</option>
+                <option value="Work">💼 Work</option>
+                <option value="Study">📚 Study</option>
+                <option value="Shopping">🛒 Shopping</option>
+                <option value="Health">💪 Health</option>
+                <option value="Finance">💰 Finance</option>
+              </select>
+            </div>
+
+            <!-- Priority Filter Dropdown -->
+            <div class="custom-select-wrap">
+              <select id="priorityFilter" aria-label="Filter by priority" class="toolbar-select">
+                <option value="all">All Priorities</option>
+                <option value="high">🔴 High</option>
+                <option value="medium">🟡 Medium</option>
+                <option value="low">🟢 Low</option>
+              </select>
+            </div>
+
+            <!-- Sort By Dropdown -->
+            <div class="custom-select-wrap">
+              <select id="sortSelector" aria-label="Sort tasks" class="toolbar-select">
+                <option value="default">Default Order</option>
+                <option value="date-asc">Due Date (Earliest)</option>
+                <option value="date-desc">Due Date (Latest)</option>
+                <option value="priority-desc">Priority (High to Low)</option>
+                <option value="title-asc">Title (A-Z)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task Lists Container -->
+      <div class="tasks-container-header">
+        <div class="tasks-heading-wrap">
+          <h2 class="tasks-heading-title">My Tasks</h2>
+          <span class="tasks-counter-badge" id="visibleCount"><%= stats.total %> tasks</span>
+        </div>
+      </div>
+
+      <div id="taskList" class="task-list-wrapper">
+        <!-- Pending Tasks Group -->
+        <section class="task-group-section" id="pendingGroup" data-group="pending">
+          <div class="task-group-header">
+            <div class="group-title-wrap">
+              <span class="group-indicator indicator-pending"></span>
+              <h3 class="group-heading">Pending</h3>
+            </div>
+            <span class="group-count-pill" id="pendingGroupCount"><%= stats.pending %></span>
+          </div>
+          <div class="task-group-items" id="pendingItemsContainer">
+            <% listItems.filter(item => item.status !== 'completed').forEach(item => { %>
+              <%- include('partials/task.ejs', { item }) %>
+            <% }) %>
+          </div>
+        </section>
+
+        <!-- Completed Tasks Group -->
+        <section class="task-group-section" id="completedGroup" data-group="completed">
+          <div class="task-group-header">
+            <div class="group-title-wrap">
+              <span class="group-indicator indicator-completed"></span>
+              <h3 class="group-heading">Completed</h3>
+            </div>
+            <span class="group-count-pill" id="completedGroupCount"><%= stats.completed %></span>
+          </div>
+          <div class="task-group-items" id="completedItemsContainer">
+            <% listItems.filter(item => item.status === 'completed').forEach(item => { %>
+              <%- include('partials/task.ejs', { item }) %>
+            <% }) %>
+          </div>
+        </section>
+
+        <!-- Empty State Card -->
+        <div class="empty-state-card" id="emptyState" hidden>
+          <div class="empty-icon-glow">
+            <svg class="empty-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <h3 class="empty-title">No tasks found</h3>
+          <p class="empty-desc">No tasks match your current filter or search criteria. Try clearing filters or create a new task!</p>
+          <button type="button" class="btn-secondary" id="resetFiltersBtn">Reset all filters</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Task Column (Sticky Sidebar) -->
+    <aside class="add-task-column">
+      <div class="add-task-card">
+        <div class="add-card-header">
+          <div class="add-card-badge">✨ NEW TASK</div>
+          <h2 class="add-card-title">Add to your list</h2>
+          <p class="add-card-desc">Capture your thought, set a due date, and stay on track.</p>
+        </div>
+
+        <form action="/add" method="post" class="add-task-form" id="addTaskForm" autocomplete="off">
+          <div class="form-group">
+            <label for="newItem" class="form-label">Task Title <span class="required-mark">*</span></label>
+            <div class="input-with-icon">
+              <input id="newItem" name="newItem" type="text" placeholder="e.g. Finish client presentation" required autocomplete="off" class="form-input">
+            </div>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="newPriority" class="form-label">Priority</label>
+              <select id="newPriority" name="priority" class="form-select">
+                <option value="medium" selected>🟡 Medium</option>
+                <option value="high">🔴 High</option>
+                <option value="low">🟢 Low</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="newDueDate" class="form-label">Due Date</label>
+              <input id="newDueDate" name="dueDate" type="date" class="form-input date-input">
+            </div>
+          </div>
+
+          <!-- Quick Date Presets -->
+          <div class="quick-dates-row">
+            <span class="quick-dates-label">Quick set:</span>
+            <button type="button" class="quick-date-btn" data-date="today">Today</button>
+            <button type="button" class="quick-date-btn" data-date="tomorrow">Tomorrow</button>
+            <button type="button" class="quick-date-btn" data-date="next-week">Next Week</button>
+          </div>
+
+          <div class="form-group">
+            <label for="newCategory" class="form-label">Category</label>
+            <select id="newCategory" name="category" class="form-select">
+              <option value="Personal" selected>👤 Personal</option>
+              <option value="Work">💼 Work</option>
+              <option value="Study">📚 Study</option>
+              <option value="Shopping">🛒 Shopping</option>
+              <option value="Health">💪 Health</option>
+              <option value="Finance">💰 Finance</option>
+            </select>
+          </div>
+
+          <button class="submit-add-btn" id="submitAddBtn" type="submit">
+            <span class="btn-spinner" hidden></span>
+            <svg class="btn-plus-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span class="btn-label">Add Task</span>
+          </button>
+        </form>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Toast Notification Hub -->
+  <div class="toast-hub" id="toastHub" aria-live="polite" aria-atomic="true"></div>
 
   <script src="/scripts/app.js"></script>
   <%- include('partials/footer.ejs'); -%>

@@ -1,6 +1,131 @@
-<article class="task-card <%= item.status === 'completed' ? 'is-completed' : '' %>" data-task-id="<%= item.id %>" data-title="<%= item.title.toLowerCase() %>" data-status="<%= item.status %>" data-priority="<%= item.priority %>">
-  <form class="status-form" action="/status" method="post"><input type="hidden" name="id" value="<%= item.id %>"><input type="hidden" name="status" value="<%= item.status === 'completed' ? 'pending' : 'completed' %>"><label class="check-wrap"><input class="status-checkbox" type="checkbox" <%= item.status === 'completed' ? 'checked' : '' %>><span class="checkmark"></span></label></form>
-  <div class="task-content"><div class="task-title-row"><h3><%= item.title %></h3><span class="priority priority-<%= item.priority %>"><%= item.priority %></span></div><div class="task-meta"><span class="category"><%= item.category %></span><% if (item.due_date) { %><span class="due-date" data-due-date="<%= item.due_date.toISOString ? item.due_date.toISOString().slice(0, 10) : item.due_date %>">◷ <%= new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></span><% } %></div></div>
-  <div class="task-actions"><button class="icon-btn edit-task" type="button" aria-label="Edit task">✎</button><form action="/delete" method="post"><input type="hidden" name="deleteItemId" value="<%= item.id %>"><button class="icon-btn delete-task" type="submit" aria-label="Delete task">×</button></form></div>
-  <form class="inline-edit" action="/edit" method="post"><input type="hidden" name="updatedItemId" value="<%= item.id %>"><input name="updatedItemTitle" value="<%= item.title %>" required><select name="updatedItemPriority"><option value="high" <%= item.priority === 'high' ? 'selected' : '' %>>High</option><option value="medium" <%= item.priority === 'medium' ? 'selected' : '' %>>Medium</option><option value="low" <%= item.priority === 'low' ? 'selected' : '' %>>Low</option></select><input type="date" name="updatedItemDueDate" value="<%= item.due_date ? (item.due_date.toISOString ? item.due_date.toISOString().slice(0, 10) : item.due_date) : '' %>"><select name="updatedItemCategory"><% ['Study', 'Work', 'Personal', 'Shopping'].forEach(category => { %><option <%= item.category === category ? 'selected' : '' %>><%= category %></option><% }) %></select><button type="submit" class="save-btn">Save</button></form>
+<% 
+  const isCompleted = item.status === 'completed';
+  const rawDate = item.due_date ? (item.due_date.toISOString ? item.due_date.toISOString().slice(0, 10) : String(item.due_date).slice(0, 10)) : '';
+  let formattedDate = '';
+  if (rawDate) {
+    try {
+      const parts = rawDate.split('-');
+      if (parts.length === 3) {
+        const d = new Date(parts[0], parts[1] - 1, parts[2]);
+        formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
+    } catch(e) { formattedDate = rawDate; }
+  }
+  const categoryIconMap = {
+    'Personal': '👤',
+    'Work': '💼',
+    'Study': '📚',
+    'Shopping': '🛒',
+    'Health': '💪',
+    'Finance': '💰'
+  };
+  const catIcon = categoryIconMap[item.category] || '📌';
+%>
+<article class="task-card <%= isCompleted ? 'is-completed' : '' %>" 
+         id="task-<%= item.id %>"
+         data-task-id="<%= item.id %>" 
+         data-title="<%= item.title.toLowerCase() %>" 
+         data-status="<%= item.status %>" 
+         data-priority="<%= item.priority %>"
+         data-category="<%= item.category %>"
+         data-due-date="<%= rawDate %>">
+  
+  <div class="task-view-mode">
+    <label class="custom-checkbox-wrap" title="<%= isCompleted ? 'Mark as pending' : 'Mark as completed' %>">
+      <input class="status-checkbox" type="checkbox" <%= isCompleted ? 'checked' : '' %> aria-label="Toggle task status">
+      <span class="custom-checkmark">
+        <svg class="check-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.5 8.5L6.5 11.5L12.5 4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </label>
+
+    <div class="task-body">
+      <div class="task-header-line">
+        <h3 class="task-title" title="<%= item.title %>"><%= item.title %></h3>
+        <span class="priority-pill priority-<%= item.priority %>">
+          <span class="priority-dot"></span>
+          <%= item.priority.charAt(0).toUpperCase() + item.priority.slice(1) %>
+        </span>
+      </div>
+
+      <div class="task-meta-row">
+        <span class="category-pill category-<%= item.category.toLowerCase() %>">
+          <span class="cat-icon"><%= catIcon %></span>
+          <%= item.category %>
+        </span>
+
+        <% if (rawDate) { %>
+          <span class="due-date-pill" data-due-date="<%= rawDate %>" title="Due date: <%= rawDate %>">
+            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span class="due-text"><%= formattedDate %></span>
+          </span>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="task-actions-group">
+      <button class="action-btn edit-task-btn" type="button" aria-label="Edit task" title="Edit task">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+      </button>
+
+      <button class="action-btn delete-task-btn" type="button" aria-label="Delete task" title="Delete task">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Inline Edit Drawer -->
+  <form class="inline-edit-form" action="/edit" method="post">
+    <input type="hidden" name="updatedItemId" value="<%= item.id %>">
+    <div class="edit-fields-grid">
+      <div class="edit-field full-width">
+        <label class="edit-label">Task Title</label>
+        <input class="edit-input-title" name="updatedItemTitle" value="<%= item.title %>" required placeholder="What needs to be done?">
+      </div>
+      
+      <div class="edit-field">
+        <label class="edit-label">Priority</label>
+        <select class="edit-select" name="updatedItemPriority">
+          <option value="high" <%= item.priority === 'high' ? 'selected' : '' %>>🔴 High</option>
+          <option value="medium" <%= item.priority === 'medium' ? 'selected' : '' %>>🟡 Medium</option>
+          <option value="low" <%= item.priority === 'low' ? 'selected' : '' %>>🟢 Low</option>
+        </select>
+      </div>
+
+      <div class="edit-field">
+        <label class="edit-label">Due Date</label>
+        <input class="edit-date" type="date" name="updatedItemDueDate" value="<%= rawDate %>">
+      </div>
+
+      <div class="edit-field">
+        <label class="edit-label">Category</label>
+        <select class="edit-select" name="updatedItemCategory">
+          <% ['Personal', 'Work', 'Study', 'Shopping', 'Health', 'Finance'].forEach(cat => { %>
+            <option value="<%= cat %>" <%= item.category === cat ? 'selected' : '' %>><%= cat %></option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+
+    <div class="edit-actions-row">
+      <button type="button" class="cancel-edit-btn">Cancel</button>
+      <button type="submit" class="save-edit-btn">
+        <span class="save-btn-text">Save Changes</span>
+      </button>
+    </div>
+  </form>
 </article>
