@@ -13,61 +13,22 @@
   const fullDateName = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 %>
 
-  <!-- Top Navigation Bar -->
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-icon-wrapper">
-        <svg class="brand-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </div>
-      <div class="brand-text">
-        <span class="brand-title">Taskflow</span>
-        <span class="brand-tag">Workspace</span>
-      </div>
-    </div>
-
-    <div class="topbar-actions">
-      <div class="live-sync-indicator" title="Connected to Neon Database">
-        <span class="sync-dot"></span>
-        <span class="sync-text">Live Sync</span>
-      </div>
-
-      <button class="theme-toggle-btn" id="themeToggle" type="button" aria-label="Toggle theme">
-        <div class="theme-icon-container">
-          <!-- Sun Icon for Dark Mode toggle -->
-          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <!-- Moon Icon for Light Mode toggle -->
-          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </div>
-        <span id="themeLabel">Dark mode</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- Welcome / Greeting Banner -->
+  <!-- Dashboard Welcome / Header Section (No navbar) -->
   <section class="welcome-banner">
     <div class="welcome-content">
-      <div class="greeting-badge">
-        <span class="greeting-icon" id="greetingIcon">☀️</span>
-        <span class="eyebrow" id="eyebrowText">YOUR DAILY DASHBOARD</span>
+      <div class="brand-eyebrow-row">
+        <div class="brand-badge">
+          <svg class="brand-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span class="brand-name">Taskflow</span>
+        </div>
+        <span class="eyebrow" id="eyebrowText">Daily Dashboard</span>
       </div>
-      <h1 class="welcome-heading" id="welcomeGreeting">Good day, let’s get things done.</h1>
+      <h1 class="welcome-heading" id="welcomeGreeting">Good day, let's get things done.</h1>
       <p class="welcome-subtext" id="welcomeSubtext">
         <% if (pendingCount === 0 && totalCount > 0) { %>
-          ✨ All tasks are completed! Enjoy your day.
+          All tasks are completed! Enjoy your day.
         <% } else if (totalCount === 0) { %>
           Your workspace is clear. Add a task to get started!
         <% } else { %>
@@ -196,12 +157,12 @@
             <div class="custom-select-wrap">
               <select id="categoryFilter" aria-label="Filter by category" class="toolbar-select">
                 <option value="all">All Categories</option>
-                <option value="Personal">👤 Personal</option>
-                <option value="Work">💼 Work</option>
-                <option value="Study">📚 Study</option>
-                <option value="Shopping">🛒 Shopping</option>
-                <option value="Health">💪 Health</option>
-                <option value="Finance">💰 Finance</option>
+                <option value="Personal">Personal</option>
+                <option value="Work">Work</option>
+                <option value="Study">Study</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Health">Health</option>
+                <option value="Finance">Finance</option>
               </select>
             </div>
 
@@ -209,20 +170,9 @@
             <div class="custom-select-wrap">
               <select id="priorityFilter" aria-label="Filter by priority" class="toolbar-select">
                 <option value="all">All Priorities</option>
-                <option value="high">🔴 High</option>
-                <option value="medium">🟡 Medium</option>
-                <option value="low">🟢 Low</option>
-              </select>
-            </div>
-
-            <!-- Sort By Dropdown -->
-            <div class="custom-select-wrap">
-              <select id="sortSelector" aria-label="Sort tasks" class="toolbar-select">
-                <option value="default">Default Order</option>
-                <option value="date-asc">Due Date (Earliest)</option>
-                <option value="date-desc">Due Date (Latest)</option>
-                <option value="priority-desc">Priority (High to Low)</option>
-                <option value="title-asc">Title (A-Z)</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
               </select>
             </div>
           </div>
@@ -289,7 +239,7 @@
     <aside class="add-task-column">
       <div class="add-task-card">
         <div class="add-card-header">
-          <div class="add-card-badge">✨ NEW TASK</div>
+          <div class="add-card-badge">NEW TASK</div>
           <h2 class="add-card-title">Add to your list</h2>
           <p class="add-card-desc">Capture your thought, set a due date, and stay on track.</p>
         </div>
@@ -298,7 +248,7 @@
           <div class="form-group">
             <label for="newItem" class="form-label">Task Title <span class="required-mark">*</span></label>
             <div class="input-with-icon">
-              <input id="newItem" name="newItem" type="text" placeholder="e.g. Finish client presentation" required autocomplete="off" class="form-input">
+              <input id="newItem" name="newItem" type="text" placeholder="e.g. Finish project wireframe" required autocomplete="off" class="form-input">
             </div>
           </div>
 
@@ -306,9 +256,9 @@
             <div class="form-group">
               <label for="newPriority" class="form-label">Priority</label>
               <select id="newPriority" name="priority" class="form-select">
-                <option value="medium" selected>🟡 Medium</option>
-                <option value="high">🔴 High</option>
-                <option value="low">🟢 Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+                <option value="low">Low</option>
               </select>
             </div>
 
@@ -329,12 +279,12 @@
           <div class="form-group">
             <label for="newCategory" class="form-label">Category</label>
             <select id="newCategory" name="category" class="form-select">
-              <option value="Personal" selected>👤 Personal</option>
-              <option value="Work">💼 Work</option>
-              <option value="Study">📚 Study</option>
-              <option value="Shopping">🛒 Shopping</option>
-              <option value="Health">💪 Health</option>
-              <option value="Finance">💰 Finance</option>
+              <option value="Personal" selected>Personal</option>
+              <option value="Work">Work</option>
+              <option value="Study">Study</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Health">Health</option>
+              <option value="Finance">Finance</option>
             </select>
           </div>
 

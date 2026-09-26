@@ -1,6 +1,6 @@
 /**
- * Taskflow - Reactive Client-Side Engine
- * Handles asynchronous CRUD, dynamic DOM updates, real-time stats, filtering, sorting, and UX interactions.
+ * Taskflow - Reactive Neumorphic Client-Side Engine
+ * Handles asynchronous CRUD, dynamic DOM updates, real-time stats, filtering, sorting, theme switching, and UX interactions.
  */
 
 (function () {
@@ -13,7 +13,6 @@
   const priorityFilter = document.getElementById("priorityFilter");
   const sortSelector = document.getElementById("sortSelector");
   const filterChips = document.querySelectorAll(".filter-chip");
-  const statCards = document.querySelectorAll(".stat-card[data-quick-filter]");
   const emptyState = document.getElementById("emptyState");
   const resetFiltersBtn = document.getElementById("resetFiltersBtn");
   const visibleCount = document.getElementById("visibleCount");
@@ -33,15 +32,25 @@
   let activePriorityFilter = "all";
   let activeSort = "default";
 
-  // Category Icon Map
-  const categoryIcons = {
-    'Personal': '👤',
-    'Work': '💼',
-    'Study': '📚',
-    'Shopping': '🛒',
-    'Health': '💪',
-    'Finance': '💰'
-  };
+  // Category SVG Helper (Zero Emojis)
+  function getCategorySvg(category) {
+    switch (category) {
+      case 'Personal':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+      case 'Work':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>`;
+      case 'Study':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`;
+      case 'Shopping':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>`;
+      case 'Health':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>`;
+      case 'Finance':
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>`;
+      default:
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>`;
+    }
+  }
 
   // --- Toast Notification System ---
   function showToast(message, type = "info") {
@@ -86,32 +95,25 @@
     return div.innerHTML;
   }
 
-  // --- Dynamic Greeting Initialization ---
+  // --- Dynamic Greeting Initialization (No Emojis) ---
   function initGreeting() {
     const greetingEl = document.getElementById("welcomeGreeting");
-    const greetingIcon = document.getElementById("greetingIcon");
     if (!greetingEl) return;
 
     const hour = new Date().getHours();
-    let greetingText = "Good day, let’s get things done.";
-    let icon = "☀️";
+    let greetingText = "Good day, let's get things done.";
 
     if (hour >= 5 && hour < 12) {
-      greetingText = "Good morning, let’s achieve your goals.";
-      icon = "🌅";
+      greetingText = "Good morning, let's achieve your goals.";
     } else if (hour >= 12 && hour < 17) {
       greetingText = "Good afternoon, keep the momentum going.";
-      icon = "☀️";
     } else if (hour >= 17 && hour < 22) {
       greetingText = "Good evening, wrap up your day strong.";
-      icon = "🌆";
     } else {
-      greetingText = "Burning the midnight oil? Stay focused.";
-      icon = "🌙";
+      greetingText = "Working late? Stay focused and calm.";
     }
 
     greetingEl.textContent = greetingText;
-    if (greetingIcon) greetingIcon.textContent = icon;
   }
 
   // --- Date Formatter Helper ---
@@ -206,13 +208,13 @@
       progressPill.textContent = `${percentage}%`;
     }
 
-    // Dynamic greeting subtext
+    // Dynamic greeting subtext (No Emojis)
     const welcomeSubtext = document.getElementById("welcomeSubtext");
     if (welcomeSubtext) {
       if (total === 0) {
         welcomeSubtext.textContent = "Your workspace is clear. Add a task to get started!";
       } else if (pending === 0) {
-        welcomeSubtext.textContent = "✨ All tasks are completed! Enjoy your day.";
+        welcomeSubtext.textContent = "All tasks are completed! Enjoy your day.";
       } else {
         welcomeSubtext.innerHTML = `You have <strong id="heroPendingCount">${pending}</strong> task${pending === 1 ? '' : 's'} pending. Stay focused and keep momentum.`;
       }
@@ -316,12 +318,12 @@
     cards.forEach(card => container.appendChild(card));
   }
 
-  // --- Create Task Card HTML Element Dynamically ---
+  // --- Create Task Card HTML Element Dynamically (No Emojis) ---
   function createTaskCardElement(task) {
     const isCompleted = task.status === "completed";
     const rawDate = task.due_date ? (task.due_date.slice ? task.due_date.slice(0, 10) : String(task.due_date).slice(0, 10)) : "";
     const { text: formattedDate, isOverdue, isToday } = formatDateBadge(rawDate);
-    const catIcon = categoryIcons[task.category] || "📌";
+    const catSvg = getCategorySvg(task.category);
 
     const article = document.createElement("article");
     article.className = `task-card ${isCompleted ? 'is-completed' : ''} task-item-enter`;
@@ -355,8 +357,8 @@
 
           <div class="task-meta-row">
             <span class="category-pill category-${task.category.toLowerCase()}">
-              <span class="cat-icon">${catIcon}</span>
-              ${task.category}
+              <span class="cat-icon-svg">${catSvg}</span>
+              <span class="cat-label">${task.category}</span>
             </span>
 
             ${rawDate ? `
@@ -403,9 +405,9 @@
           <div class="edit-field">
             <label class="edit-label">Priority</label>
             <select class="edit-select" name="updatedItemPriority">
-              <option value="high" ${task.priority === 'high' ? 'selected' : ''}>🔴 High</option>
-              <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>🟡 Medium</option>
-              <option value="low" ${task.priority === 'low' ? 'selected' : ''}>🟢 Low</option>
+              <option value="high" ${task.priority === 'high' ? 'selected' : ''}>High</option>
+              <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>Medium</option>
+              <option value="low" ${task.priority === 'low' ? 'selected' : ''}>Low</option>
             </select>
           </div>
 
@@ -492,7 +494,7 @@
         updateDueDateBadges();
         applyFiltersAndSort();
 
-        showToast(`Task "${createdTask.title}" added!`, "success");
+        showToast(`Task "${createdTask.title}" added successfully!`, "success");
       } catch (err) {
         console.error("Error adding task:", err);
         showToast("Failed to create task. Please try again.", "error");
@@ -549,7 +551,7 @@
         }, 150);
 
         showToast(
-          newStatus === "completed" ? "Task marked completed! 🎉" : "Task moved to pending ⏳",
+          newStatus === "completed" ? "Task marked completed!" : "Task moved to pending",
           "success"
         );
       } catch (err) {
@@ -705,9 +707,9 @@
 
         const catPill = card.querySelector(".category-pill");
         if (catPill) {
-          const catIcon = categoryIcons[updated.category] || "📌";
+          const catSvg = getCategorySvg(updated.category);
           catPill.className = `category-pill category-${updated.category.toLowerCase()}`;
-          catPill.innerHTML = `<span class="cat-icon">${catIcon}</span> ${updated.category}`;
+          catPill.innerHTML = `<span class="cat-icon-svg">${catSvg}</span> <span class="cat-label">${updated.category}</span>`;
         }
 
         const metaRow = card.querySelector(".task-meta-row");
@@ -742,7 +744,7 @@
         // Close drawer
         card.classList.remove("is-editing");
         applyFiltersAndSort();
-        showToast("Task updated successfully! ✏️", "success");
+        showToast("Task updated successfully!", "success");
       } catch (err) {
         console.error("Error editing task:", err);
         showToast("Failed to save edits.", "error");
@@ -833,11 +835,15 @@
     });
   });
 
-  // --- Theme Toggle ---
+  // --- Theme Toggle Engine ---
   function updateThemeUI(theme) {
     document.documentElement.dataset.theme = theme;
     if (themeLabel) {
       themeLabel.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+    }
+    if (themeToggle) {
+      themeToggle.setAttribute("data-current-theme", theme);
+      themeToggle.setAttribute("aria-label", `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
     }
   }
 
