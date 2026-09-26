@@ -3,12 +3,14 @@
 <%
   const safeStats = (typeof stats !== 'undefined' && stats) ? stats : { total: 0, completed: 0, pending: 0, percentage: 0 };
   const safeItems = (typeof listItems !== 'undefined' && Array.isArray(listItems)) ? listItems : [];
-  const pendingItems = safeItems.filter(item => item && item.status !== 'completed');
-  const completedItems = safeItems.filter(item => item && item.status === 'completed');
+  const pendingItems = safeItems.filter(function(item) { return item && item.status !== 'completed'; });
+  const completedItems = safeItems.filter(function(item) { return item && item.status === 'completed'; });
   const totalCount = safeStats.total || safeItems.length || 0;
   const completedCount = safeStats.completed || completedItems.length || 0;
   const pendingCount = (typeof safeStats.pending !== 'undefined') ? safeStats.pending : pendingItems.length;
   const percentRate = (typeof safeStats.percentage !== 'undefined') ? safeStats.percentage : (totalCount ? Math.round((completedCount / totalCount) * 100) : 0);
+  const weekdayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+  const fullDateName = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 %>
 
   <!-- Top Navigation Bar -->
@@ -69,14 +71,14 @@
         <% } else if (totalCount === 0) { %>
           Your workspace is clear. Add a task to get started!
         <% } else { %>
-          You have <strong id="heroPendingCount"><%= pendingCount %></strong> task<%= pendingCount === 1 ? '' : 's' %> pending. Stay focused and keep momentum.
+          You have <strong id="heroPendingCount"><%= pendingCount %></strong> <%= pendingCount === 1 ? 'task' : 'tasks' %> pending. Stay focused and keep momentum.
         <% } %>
       </p>
     </div>
     <div class="date-badge">
       <div class="date-badge-inner">
-        <span class="weekday"><%= new Date().toLocaleDateString('en-US', { weekday: 'long' }) %></span>
-        <span class="full-date"><%= new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+        <span class="weekday"><%= weekdayName %></span>
+        <span class="full-date"><%= fullDateName %></span>
       </div>
     </div>
   </section>
@@ -141,7 +143,7 @@
           </svg>
         </div>
       </div>
-      <strong class="stat-value" id="statPercentage"><%= `${percentRate}%` %></strong>
+      <strong class="stat-value" id="statPercentage"><%= percentRate %>%</strong>
       <div class="stat-card-footer">
         <span class="stat-subtext" id="statRateLabel">Overall efficiency</span>
       </div>
@@ -157,12 +159,12 @@
       </div>
       <div class="progress-status-badge">
         <span class="progress-count-text" id="progressFraction"><strong><%= completedCount %></strong> / <%= totalCount %> completed</span>
-        <span class="progress-pill-percentage" id="progressPercentagePill"><%= `${percentRate}%` %></span>
+        <span class="progress-pill-percentage" id="progressPercentagePill"><%= percentRate %>%</span>
       </div>
     </div>
     <div class="progress-track-wrapper">
       <div class="progress-track-bar">
-        <div class="progress-track-fill" id="progressBarFill" data-progress="<%= percentRate %>" style="width: <%= percentRate %>%;"></div>
+        <div class="progress-track-fill" id="progressBarFill" data-progress="<%= percentRate %>"></div>
       </div>
     </div>
   </section>
@@ -246,9 +248,9 @@
             <span class="group-count-pill" id="pendingGroupCount"><%= pendingCount %></span>
           </div>
           <div class="task-group-items" id="pendingItemsContainer">
-            <% pendingItems.forEach(item => { %>
-              <%- include('partials/task.ejs', { item }) %>
-            <% }) %>
+            <% pendingItems.forEach(function(item) { %>
+              <%- include('partials/task.ejs', { item: item }) %>
+            <% }); %>
           </div>
         </section>
 
@@ -262,9 +264,9 @@
             <span class="group-count-pill" id="completedGroupCount"><%= completedCount %></span>
           </div>
           <div class="task-group-items" id="completedItemsContainer">
-            <% completedItems.forEach(item => { %>
-              <%- include('partials/task.ejs', { item }) %>
-            <% }) %>
+            <% completedItems.forEach(function(item) { %>
+              <%- include('partials/task.ejs', { item: item }) %>
+            <% }); %>
           </div>
         </section>
 
