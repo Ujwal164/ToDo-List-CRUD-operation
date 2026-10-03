@@ -228,8 +228,8 @@ a {
 }
 
 .brand-check {
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
 }
 
 .brand-name {
@@ -1275,6 +1275,10 @@ a {
 /* ==========================================================================
    EMPTY STATE (NEUMORPHIC)
    ========================================================================== */
+.empty-state-card[hidden] {
+  display: none;
+}
+
 .empty-state-card {
   padding: 48px 32px;
   background: var(--surface);
@@ -1350,8 +1354,8 @@ a {
 .neumorphic-theme-btn {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 18px;
+  justify-content: center;
+  padding: 8px;
   background: var(--surface);
   border-radius: var(--radius-full);
   box-shadow: var(--nm-card);
@@ -1397,27 +1401,22 @@ a {
   color: var(--purple);
 }
 
-/* Light Theme: Display Moon slot as active switch option */
+/* Light Theme: show moon (click to go dark) */
 html[data-theme="light"] .sun-slot {
-  display: flex;
+  display: none;
 }
 
 html[data-theme="light"] .moon-slot {
-  display: none;
-}
-
-/* Dark Theme: Display Sun slot as active switch option */
-html[data-theme="dark"] .sun-slot {
-  display: none;
-}
-
-html[data-theme="dark"] .moon-slot {
   display: flex;
 }
 
-.theme-toggle-text {
-  font-family: var(--font-heading);
-  letter-spacing: -0.01em;
+/* Dark Theme: show sun (click to go light) */
+html[data-theme="dark"] .sun-slot {
+  display: flex;
+}
+
+html[data-theme="dark"] .moon-slot {
+  display: none;
 }
 
 /* ==========================================================================

@@ -19,7 +19,6 @@
   const addTaskForm = document.getElementById("addTaskForm");
   const submitAddBtn = document.getElementById("submitAddBtn");
   const themeToggle = document.getElementById("themeToggle");
-  const themeLabel = document.getElementById("themeLabel");
   const toastHub = document.getElementById("toastHub");
   const pendingContainer = document.getElementById("pendingItemsContainer");
   const completedContainer = document.getElementById("completedItemsContainer");
@@ -838,9 +837,6 @@
   // --- Theme Toggle Engine ---
   function updateThemeUI(theme) {
     document.documentElement.dataset.theme = theme;
-    if (themeLabel) {
-      themeLabel.textContent = theme === "dark" ? "Light mode" : "Dark mode";
-    }
     if (themeToggle) {
       themeToggle.setAttribute("data-current-theme", theme);
       themeToggle.setAttribute("aria-label", `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
