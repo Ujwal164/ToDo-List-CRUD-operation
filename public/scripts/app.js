@@ -847,7 +847,20 @@
     themeToggle.addEventListener("click", () => {
       const currentTheme = document.documentElement.dataset.theme || "light";
       const nextTheme = currentTheme === "dark" ? "light" : "dark";
-      updateThemeUI(nextTheme);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduceMotion) {
+        updateThemeUI(nextTheme);
+      } else if (document.startViewTransition) {
+        // Crossfade the whole page between themes
+        document.startViewTransition(() => updateThemeUI(nextTheme));
+      } else {
+        // Fallback: briefly transition colors and shadows on every element
+        const root = document.documentElement;
+        root.classList.add("theme-transition");
+        updateThemeUI(nextTheme);
+        setTimeout(() => root.classList.remove("theme-transition"), 450);
+      }
       localStorage.setItem("taskflow-theme", nextTheme);
       localStorage.setItem("task-theme", nextTheme);
     });

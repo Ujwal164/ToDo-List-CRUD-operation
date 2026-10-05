@@ -1,4 +1,3 @@
--- Run once against the existing database. Every ALTER is safe to rerun.
 ALTER TABLE items ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';
 ALTER TABLE items ADD COLUMN IF NOT EXISTS priority VARCHAR(20) DEFAULT 'medium';
 ALTER TABLE items ADD COLUMN IF NOT EXISTS due_date DATE;

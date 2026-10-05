@@ -112,6 +112,19 @@ html[data-theme="dark"] {
   --border-dark: rgba(0, 0, 0, 0.4);
 }
 
+/* --- Theme Switch Animation --- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.4s;
+  animation-timing-function: ease-in-out;
+}
+
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, fill 0.4s ease, stroke 0.4s ease !important;
+}
+
 /* --- Base Reset & Global Styles --- */
 *,
 *::before,
