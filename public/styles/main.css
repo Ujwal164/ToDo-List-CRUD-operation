@@ -1703,3 +1703,232 @@ html[data-theme="dark"] .moon-slot {
     max-width: 100%;
   }
 }
+
+/* ==========================================================================
+   NEUMORPHIC AUTH PAGES (LOGIN / REGISTER)
+   ========================================================================== */
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 220px);
+  padding: 24px 0;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px 36px 32px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--nm-card);
+  border: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  transition: all var(--transition-normal);
+}
+
+.auth-brand {
+  align-self: flex-start;
+  margin-bottom: 24px;
+}
+
+.auth-title {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-contrast);
+  margin: 0 0 6px;
+}
+
+.auth-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 28px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding-left: 4px;
+}
+
+/* Inset "carved" input well */
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--nm-inset);
+  transition: box-shadow var(--transition-fast);
+}
+
+.auth-input-wrap:focus-within {
+  box-shadow: var(--nm-inset-deep), 0 0 0 2px var(--primary-glow);
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: 16px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-subtle);
+  pointer-events: none;
+  transition: color var(--transition-fast);
+}
+
+.auth-input-wrap:focus-within .auth-input-icon {
+  color: var(--primary);
+}
+
+.auth-input {
+  width: 100%;
+  padding: 14px 16px 14px 46px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+.auth-input::placeholder {
+  color: var(--text-subtle);
+}
+
+/* Raised buttons that press in on click */
+.auth-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.auth-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.auth-btn-primary {
+  margin-top: 6px;
+  color: #ffffff;
+  background: var(--primary-gradient);
+  box-shadow: var(--nm-button), var(--nm-glow);
+}
+
+.auth-btn-primary:hover {
+  box-shadow: var(--nm-button-hover), var(--nm-glow);
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.auth-btn-primary:active {
+  box-shadow: var(--nm-pressed);
+  transform: translateY(0);
+}
+
+.auth-btn-social {
+  color: var(--text-main);
+  background: var(--surface);
+  box-shadow: var(--nm-button);
+}
+
+.auth-btn-social svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-btn-social:hover {
+  box-shadow: var(--nm-button-hover);
+  transform: translateY(-1px);
+}
+
+.auth-btn-social:active {
+  box-shadow: var(--nm-pressed);
+  transform: translateY(0);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0;
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  box-shadow: var(--nm-inset);
+}
+
+.auth-switch {
+  margin: 24px 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.auth-switch a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* Keyboard shortcut tips only apply to the task dashboard */
+.app-shell:has(.auth-page) ~ .app-footer .footer-shortcuts {
+  display: none;
+}
+
+@media (max-width: 680px) {
+  .auth-page {
+    min-height: auto;
+    padding: 8px 0;
+  }
+
+  .auth-card {
+    padding: 28px 20px 24px;
+  }
+
+  .auth-title {
+    font-size: 1.5rem;
+  }
+}
